@@ -1,0 +1,338 @@
+/* ============================================================
+   Shibili Nuhman — scroll-driven portfolio
+   Layout is authored in Figma design space and scaled to fit:
+     desktop  1920 x 1080
+     compact   390 x  844
+   Every animated box is positioned by JS in design pixels.
+   ============================================================ */
+
+/* Self-hosted variable faces (SIL Open Font License 1.1) — no third-party
+   requests, and the metrics the layout is tuned against always arrive. */
+@font-face{
+  font-family:"Manrope";
+  font-style:normal;
+  font-weight:400 800;
+  font-display:swap;
+  src:url("fonts/manrope-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Manrope";
+  font-style:normal;
+  font-weight:400 800;
+  font-display:swap;
+  src:url("fonts/manrope-latin-ext.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:"Big Shoulders Display";
+  font-style:normal;
+  font-weight:400 600;
+  font-display:swap;
+  src:url("fonts/big-shoulders-display-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+:root{
+  /* desktop design-space type scale is the default, so the page still reads
+     correctly before JS picks a layout (and with JS off entirely) */
+  --giant-size:600px; --meet-size:32px;  --hi-size:228px;
+  --head-size:47px;   --head-lh:55px;    --head-w:900px;
+  --ovl-size:14px;    --lede-size:28px;  --lede-sm:14px;
+  --note-size:17px;   --note-sm:14px;    --note-xs:11px;
+  --stat-size:68px;   --org-size:17px;
+
+  --ink:#000;
+  --ink-soft:#0B0B0B;
+  --muted:#8D8D8D;
+  --accent:#2B7FFF;
+  --paper:#fff;
+
+  /* Figma "Group 8" layered lift */
+  --lift:
+    0 6px 13px rgba(0,0,0,.29),
+    0 24px 24px rgba(0,0,0,.26),
+    0 55px 33px rgba(0,0,0,.15),
+    0 98px 39px rgba(0,0,0,.04),
+    0 153px 43px rgba(0,0,0,.01);
+  --lift-tool:
+    0 26px 80px rgba(0,0,0,.16),
+    0 12px 40px rgba(0,0,0,.07),
+    0 5px 8px rgba(0,0,0,.05);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+
+/* ── scroll scaffold ─────────────────────────────────────── */
+.scroller{height:950vh;position:relative}
+.pin{position:sticky;top:0;height:100svh;overflow:hidden}
+
+.stage{position:absolute;inset:0}
+.frame{
+  position:absolute;
+  left:50%;top:50%;
+  width:var(--W);height:var(--H);
+  transform:translate(-50%,-50%) scale(var(--s,1));
+  transform-origin:center center;
+  will-change:transform;
+}
+.frame > *{position:absolute;top:0;left:0;will-change:transform,opacity}
+#desi{z-index:1} #cutout{z-index:2} #gner{z-index:3} #meet{z-index:4}
+#profile{z-index:2} #photocard{z-index:3}
+#card{z-index:5} #panel{z-index:5} #hi{z-index:6} #heading{z-index:7}
+#badge{z-index:8} #tools{z-index:9}
+
+/* ── Act 1 · giant kinetic type ──────────────────────────── */
+.giant{
+  width:var(--W);
+  font-family:"Big Shoulders Display","Oswald","Haettenschweiler","Arial Narrow",
+              ui-sans-serif,system-ui,sans-serif;
+  font-weight:400;
+  font-size:var(--giant-size);
+  line-height:1.2;
+  letter-spacing:-.02em;
+  text-align:center;
+  white-space:nowrap;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  user-select:none;
+}
+.giant--a{background-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(255,255,255,0) 100%)}
+.giant--b{background-image:linear-gradient(180deg,rgba(0,0,0,.58) 0%,rgba(255,255,255,0) 83%)}
+
+.meet{
+  width:var(--W);
+  text-align:center;
+  font-family:-apple-system,"SF Pro Display","Manrope",system-ui,sans-serif;
+  font-weight:500;
+  font-size:var(--meet-size);
+  line-height:1.32;
+  color:#000;
+  white-space:nowrap;
+  user-select:none;
+}
+
+.cutout{height:auto;object-fit:contain;pointer-events:none}
+
+/* ── portraits ───────────────────────────────────────────── */
+.profile{
+  object-fit:cover;
+  object-position:50% 22%;
+  transform-origin:0 0;
+  filter:contrast(.96) brightness(1.02);
+}
+.photocard{
+  object-fit:cover;
+  object-position:50% 30%;
+  transform-origin:0 0;
+  box-shadow:0 21px 46px rgba(0,0,0,.10), 0 83px 83px rgba(0,0,0,.09);
+}
+
+/* ── statement card + heading ────────────────────────────── */
+.card{background:var(--paper);box-shadow:0 4px 200px rgba(0,0,0,.25)}
+
+.hi{
+  font-weight:600;
+  font-size:var(--hi-size);
+  line-height:1;
+  letter-spacing:-.05em;
+  transform-origin:0 0;
+}
+
+.heading{
+  margin:0;
+  font-weight:700;
+  font-size:var(--head-size);
+  line-height:var(--head-lh);
+  letter-spacing:-.05em;
+  color:var(--ink);
+  width:var(--head-w);
+}
+.heading .ln{display:block;white-space:nowrap}
+#oo{letter-spacing:-.06em}
+
+/* ── glass badge (Figma "Liquid Glass" pill stack) ───────── */
+.badge{display:block}
+.badge__pill,.badge__face{
+  position:absolute;
+  border-radius:999px;
+  display:grid;place-items:center;
+}
+.badge__pill{
+  background:rgba(255,255,255,.55);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.06), 0 2px 10px rgba(0,0,0,.06);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.badge__pill--3{left:0;   top:calc(var(--bh) * .34); width:calc(var(--bw) * .77); height:calc(var(--bh) * .66)}
+.badge__pill--2{left:calc(var(--bw)*.06); top:calc(var(--bh)*.20); width:calc(var(--bw)*.80); height:calc(var(--bh)*.66)}
+.badge__pill--1{left:calc(var(--bw)*.12); top:calc(var(--bh)*.34); width:calc(var(--bw)*.88); height:calc(var(--bh)*.66)}
+.badge__face{
+  left:calc(var(--bw)*.06); top:0;
+  width:calc(var(--bw)*.92); height:calc(var(--bh)*.66);
+  background:rgba(255,255,255,.72);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.10);
+  backdrop-filter:blur(14px) saturate(1.4);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);
+  font-size:calc(var(--bh) * .21);
+  font-weight:800;
+  letter-spacing:.14em;
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+
+/* ── info panel ──────────────────────────────────────────── */
+.panel{--pw:1px}
+.panel__glass{position:absolute}
+.panel__glass--main  {left:0; top:0; width:67.8%;  height:100%;  background:rgba(217,217,217,.5)}
+.panel__glass--top   {left:70%; top:0; width:30%; height:60%;  background:#CFD4D4; mix-blend-mode:luminosity}
+.panel__glass--bottom{left:70%; top:65.7%; width:30%; height:34.3%; background:rgba(213,225,235,.79); opacity:.42; mix-blend-mode:luminosity}
+
+.pl{position:absolute;inset:0}
+.pl p{margin:0;position:absolute}
+
+.ovl{
+  font-size:var(--ovl-size);
+  font-weight:700;
+  letter-spacing:.07em;
+  color:var(--muted);
+  line-height:1.2;
+}
+.lede{
+  font-size:var(--lede-size);
+  font-weight:700;
+  letter-spacing:.018em;
+  color:var(--accent);
+  line-height:1.64;
+}
+.lede--sm{font-size:var(--lede-sm);font-weight:800;letter-spacing:.036em;line-height:1.5}
+.note{font-size:var(--note-size);font-weight:400;color:var(--ink);line-height:1.18}
+.note--tight{font-size:var(--note-sm);line-height:1.15}
+.note--xs{font-size:var(--note-xs);line-height:1.45}
+.stat{
+  font-size:var(--stat-size);
+  font-weight:800;
+  letter-spacing:-.069em;
+  color:var(--accent);
+  line-height:1.85;
+}
+.orgs{display:flex;flex-direction:column}
+.orgs span{
+  font-size:var(--org-size);
+  font-weight:700;
+  letter-spacing:-.022em;
+  color:var(--ink-soft);
+  line-height:1.3;
+}
+
+/* ── software tiles ──────────────────────────────────────── */
+.tools{}
+.tool{
+  position:absolute;
+  display:grid;place-items:center;
+  border-radius:calc(var(--ts,42px) * .22);
+  box-shadow:var(--lift-tool);
+  overflow:hidden;
+}
+.tool b{
+  font-weight:800;
+  font-size:calc(var(--ts,42px) * .46);
+  letter-spacing:-.02em;
+  line-height:1;
+}
+.tool svg{width:52%;height:52%;display:block}
+.tool[data-tool="id"]{background:#49021F} .tool[data-tool="id"] b{color:#FF3366}
+.tool[data-tool="ai"]{background:#330000} .tool[data-tool="ai"] b{color:#FF9A00}
+.tool[data-tool="ae"]{background:#00005B} .tool[data-tool="ae"] b{color:#9999FF}
+.tool[data-tool="ps"]{background:#001E36} .tool[data-tool="ps"] b{color:#31A8FF}
+.tool[data-tool="lr"]{background:#001E36} .tool[data-tool="lr"] b{color:#31A8FF}
+.tool[data-tool="pr"]{background:#2A0634} .tool[data-tool="pr"] b{color:#EA77FF}
+.tool[data-tool="fg"]{background:#1F1F1F}
+.tool[data-tool="bl"]{background:linear-gradient(180deg,#E9E9E9,#E5E5E5)} .tool[data-tool="bl"] b{color:#FF7021}
+
+/* ── chrome ──────────────────────────────────────────────── */
+.cue{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:9px;
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);pointer-events:none;
+}
+.cue span{
+  width:1px;height:26px;
+  background:linear-gradient(180deg,transparent,var(--muted));
+  animation:drip 1.9s ease-in-out infinite;
+}
+@keyframes drip{0%,100%{transform:scaleY(.35);opacity:.35}50%{transform:scaleY(1);opacity:1}}
+
+.rail{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(0,0,0,.06)}
+.rail i{display:block;height:100%;width:0;background:var(--accent);transform-origin:0 50%}
+
+.foot{
+  padding:64px 24px 72px;
+  border-top:1px solid rgba(0,0,0,.08);
+  display:flex;flex-wrap:wrap;gap:8px 32px;
+  justify-content:space-between;align-items:baseline;
+}
+.foot p{margin:0;font-size:13px;letter-spacing:-.01em}
+.foot__name{font-weight:700;color:var(--ink-soft)}
+.foot__links a{color:var(--accent);text-decoration:none;font-weight:600}
+.foot__links a:hover{text-decoration:underline}
+
+/* ── design-space type scales ────────────────────────────── */
+html.dsk{
+  --giant-size:600px; --meet-size:32px;  --hi-size:228px;
+  --head-size:47px;   --head-lh:55px;    --head-w:900px;
+  --ovl-size:14px;    --lede-size:28px;  --lede-sm:14px;
+  --note-size:17px;   --note-sm:14px;    --note-xs:11px;
+  --stat-size:68px;   --org-size:17px;
+}
+html.mob{
+  --giant-size:130px; --meet-size:12px;  --hi-size:80px;
+  --head-size:22px;   --head-lh:26px;    --head-w:360px;
+  --ovl-size:10px;    --lede-size:17px;  --lede-sm:11px;
+  --note-size:11px;   --note-sm:10px;    --note-xs:9px;
+  --stat-size:44px;   --org-size:13px;
+}
+
+/* panel internals · desktop — offsets are Figma coords minus the panel origin (178,712) */
+html.dsk .pl--work  .ovl {left:53px;  top:33px}
+html.dsk .pl--work  .lede{left:47px;  top:136px; width:540px}
+html.dsk .pl--work  .note{left:49px;  top:192px; width:540px}
+html.dsk .pl--where .ovl {left:642px; top:33px}
+html.dsk .pl--where .stat{left:634px; top:32px}
+html.dsk .pl--where .orgs{left:729px; top:58px}
+html.dsk .pl--where .note{left:642px; top:122px; width:236px}
+html.dsk .pl--lang  .lede--sm{left:635px; top:194px; width:112px}
+html.dsk .pl--lang  .note--xs{left:739px; top:192px; width:140px}
+
+/* panel internals · compact — two stacked rows instead of two columns */
+html.mob .pl--work  .ovl {left:14px;  top:12px}
+html.mob .pl--work  .lede{left:14px;  top:72px;  width:334px}
+html.mob .pl--work  .note{left:14px;  top:100px; width:334px}
+html.mob .pl--where .ovl {left:14px;  top:150px}
+html.mob .pl--where .stat{left:14px;  top:160px}
+html.mob .pl--where .orgs{left:78px;  top:176px}
+html.mob .pl--where .note{left:14px;  top:222px; width:170px}
+html.mob .pl--lang  .lede--sm{left:200px; top:150px; width:146px}
+html.mob .pl--lang  .note--xs{left:200px; top:192px; width:146px}
+html.mob .panel__glass--main  {left:0;   top:0;   width:100%; height:49%}
+html.mob .panel__glass--top   {left:0;   top:52%; width:52%;  height:48%}
+html.mob .panel__glass--bottom{left:54%; top:52%; width:46%;  height:48%}
+
+/* ── reduced motion: hold the final composition ──────────── */
+@media (prefers-reduced-motion: reduce){
+  .cue{display:none}
+  .cue span{animation:none}
+}
