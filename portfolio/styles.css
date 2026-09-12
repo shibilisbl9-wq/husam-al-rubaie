@@ -1,9 +1,15 @@
 /* ============================================================
    Shibili Nuhman — scroll-driven portfolio
-   Layout is authored in Figma design space and scaled to fit:
-     desktop  1920 x 1080
-     compact   390 x  844
-   Every animated box is positioned by JS in design pixels.
+
+   The motion comes from the Figma storyboard; the composition does
+   not. Those frames were working sketches (overlapping text, grey
+   placeholder blocking, zero radius, ad-hoc gaps), so the layout is
+   rebuilt here on a real grid and the choreography is kept intact.
+
+   Layout is authored in design space and scaled to fit:
+     wide     1920 x 1080   content column 120 -> 1240, portrait bleeds right
+     compact   390 x  844   portrait band on top, content beneath
+   Animated boxes are positioned by JS in design pixels.
    ============================================================ */
 
 /* Self-hosted variable faces (SIL Open Font License 1.1) — no third-party
@@ -34,31 +40,28 @@
 }
 
 :root{
-  /* desktop design-space type scale is the default, so the page still reads
-     correctly before JS picks a layout (and with JS off entirely) */
-  --giant-size:600px; --meet-size:32px;  --hi-size:228px;
-  --head-size:47px;   --head-lh:55px;    --head-w:900px;
-  --ovl-size:14px;    --lede-size:28px;  --lede-sm:12px;
-  --note-size:17px;   --note-sm:14px;    --note-xs:11px;
-  --stat-size:68px;   --org-size:17px;
+  /* wide design-space type scale is the default, so the page reads correctly
+     before JS picks a layout, and with JS off entirely */
+  --giant-size:600px; --meet-size:32px;  --hi-size:240px;
+  --head-size:70px;   --head-lh:84px;    --head-w:1120px;
+  --ovl-size:13px;    --lede-size:26px;  --lang-size:22px;
+  --note-size:16px;   --note-sm:13px;    --note-xs:13px;
+  --stat-size:64px;   --org-size:16px;   --contact-size:17px;
+  --badge-fs:15px;    --tool-gap:20px;
 
-  --ink:#000;
-  --ink-soft:#0B0B0B;
-  --muted:#8D8D8D;
-  --accent:#2B7FFF;
+  /* Neutrals biased a few degrees cool, toward the accent, so the greys read
+     as chosen rather than inherited. */
   --paper:#fff;
+  --ink:#0A0C10;
+  --ink-soft:#161A21;
+  --muted:#868D99;
+  --rule:rgba(16,20,28,.16);
+  --accent:#2B7FFF;
 
-  /* Figma "Group 8" layered lift */
-  --lift:
-    0 6px 13px rgba(0,0,0,.29),
-    0 24px 24px rgba(0,0,0,.26),
-    0 55px 33px rgba(0,0,0,.15),
-    0 98px 39px rgba(0,0,0,.04),
-    0 153px 43px rgba(0,0,0,.01);
   --lift-tool:
-    0 26px 80px rgba(0,0,0,.16),
-    0 12px 40px rgba(0,0,0,.07),
-    0 5px 8px rgba(0,0,0,.05);
+    0 26px 80px rgba(10,12,16,.16),
+    0 12px 40px rgba(10,12,16,.07),
+    0 5px 8px rgba(10,12,16,.05);
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -73,9 +76,11 @@ body{
   -moz-osx-font-smoothing:grayscale;
   overflow-x:hidden;
 }
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
 
 /* ── scroll scaffold ─────────────────────────────────────── */
-.scroller{height:950vh;position:relative}
+.scroller{height:600vh;position:relative}
 .pin{position:sticky;top:0;height:100svh;overflow:hidden}
 
 .stage{position:absolute;inset:0}
@@ -88,8 +93,9 @@ body{
   will-change:transform;
 }
 .frame > *{position:absolute;top:0;left:0;will-change:transform,opacity}
+
 #desi,#gner{z-index:1}
-#card,#panel{z-index:2}
+#panel,#contact{z-index:2}
 #profile,#photocard{z-index:3}
 #cutout{z-index:4} #meet{z-index:5}
 #hi{z-index:6} #heading{z-index:7} #badge{z-index:8} #tools{z-index:9}
@@ -110,8 +116,9 @@ body{
   color:transparent;
   user-select:none;
 }
-.giant--a{background-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(255,255,255,0) 100%)}
-.giant--b{background-image:linear-gradient(180deg,rgba(0,0,0,.78) 0%,rgba(255,255,255,0) 100%)}
+/* the two halves are one word — matched fade, only the weight differs */
+.giant--a{background-image:linear-gradient(180deg,rgba(10,12,16,.95) 0%,rgba(255,255,255,0) 100%)}
+.giant--b{background-image:linear-gradient(180deg,rgba(10,12,16,.78) 0%,rgba(255,255,255,0) 100%)}
 
 .meet{
   width:var(--W);
@@ -120,30 +127,27 @@ body{
   font-weight:500;
   font-size:var(--meet-size);
   line-height:1.32;
-  color:#000;
+  color:var(--ink);
   white-space:nowrap;
   user-select:none;
 }
 
 .cutout{height:auto;object-fit:contain;pointer-events:none}
 
-/* ── portraits ───────────────────────────────────────────── */
-.profile{
+/* ── the portrait band ───────────────────────────────────── */
+/* Masked on the leading edge so it dissolves into the page instead of
+   butting a hard rectangle against white. */
+.portrait{
   object-fit:cover;
   object-position:50% 22%;
   transform-origin:0 0;
   filter:contrast(.96) brightness(1.02);
+  -webkit-mask-image:linear-gradient(90deg,#000 84%,transparent 100%);
+          mask-image:linear-gradient(90deg,#000 84%,transparent 100%);
 }
-.photocard{
-  object-fit:cover;
-  object-position:50% 30%;
-  transform-origin:0 0;
-  box-shadow:0 21px 46px rgba(0,0,0,.10), 0 83px 83px rgba(0,0,0,.09);
-}
+#photocard{object-position:50% 26%}
 
-/* ── statement card + heading ────────────────────────────── */
-.card{background:var(--paper);box-shadow:0 4px 200px rgba(0,0,0,.25)}
-
+/* ── the statement ───────────────────────────────────────── */
 .hi{
   font-weight:600;
   font-size:var(--hi-size);
@@ -157,99 +161,122 @@ body{
   font-weight:700;
   font-size:var(--head-size);
   line-height:var(--head-lh);
-  letter-spacing:-.05em;
+  letter-spacing:-.045em;
   color:var(--ink);
   width:var(--head-w);
 }
 .heading .ln{display:block;white-space:nowrap}
-#oo{letter-spacing:-.06em}
+#oo{letter-spacing:-.055em}
 
-/* ── glass badge (Figma "Liquid Glass" pill stack) ───────── */
 .badge{display:block}
-.badge__pill,.badge__face{
-  position:absolute;
-  border-radius:999px;
-  display:grid;place-items:center;
-}
-.badge__pill{
-  background:rgba(255,255,255,.55);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.06), 0 2px 10px rgba(0,0,0,.06);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-}
-.badge__pill--3{left:calc(var(--bw)*.03); top:calc(var(--bh)*.30); width:calc(var(--bw)*.94); height:calc(var(--bh)*.66); opacity:.35}
-.badge__pill--2{left:calc(var(--bw)*.05); top:calc(var(--bh)*.24); width:calc(var(--bw)*.92); height:calc(var(--bh)*.66); opacity:.55}
-.badge__pill--1{left:calc(var(--bw)*.07); top:calc(var(--bh)*.18); width:calc(var(--bw)*.90); height:calc(var(--bh)*.66); opacity:.8}
 .badge__face{
-  left:0; top:0;
-  width:var(--bw); height:calc(var(--bh)*.66);
-  background:rgba(255,255,255,.72);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.10);
+  position:absolute;
+  inset:0;
+  display:grid;place-items:center;
+  border-radius:999px;
+  background:rgba(255,255,255,.7);
+  box-shadow:inset 0 0 0 1px rgba(16,20,28,.2), 0 10px 30px rgba(10,12,16,.1);
   backdrop-filter:blur(14px) saturate(1.4);
   -webkit-backdrop-filter:blur(14px) saturate(1.4);
-  font-size:calc(var(--bh) * .21);
+  font-size:var(--badge-fs);
   font-weight:800;
-  letter-spacing:.14em;
+  letter-spacing:.16em;
+  text-transform:uppercase;
   color:var(--ink-soft);
   white-space:nowrap;
 }
 
-/* ── info panel ──────────────────────────────────────────── */
-.panel{--pw:1px}
-.panel__glass{position:absolute}
-.panel__glass--main  {left:0; top:0; width:67.8%;  height:100%;  background:rgba(217,217,217,.5)}
-.panel__glass--top   {left:70%; top:0; width:30%; height:60%;  background:#CFD4D4; mix-blend-mode:luminosity}
-.panel__glass--bottom{left:70%; top:65.7%; width:30%; height:34.3%; background:rgba(213,225,235,.79); opacity:.42; mix-blend-mode:luminosity}
-
-.pl{position:absolute;inset:0}
-.pl p{margin:0;position:absolute}
+/* ── the facts ───────────────────────────────────────────── */
+/* Three columns under hairline rules. The Figma's translucent grey blocks
+   were placeholder blocking; rules and space carry the structure instead. */
+.panel{}
+.col{
+  position:absolute;
+  top:0;
+  border-top:1px solid var(--rule);
+  padding-top:26px;
+}
+.col p{margin:0}
 
 .ovl{
   font-size:var(--ovl-size);
   font-weight:700;
-  letter-spacing:.07em;
+  letter-spacing:.11em;
+  text-transform:uppercase;
   color:var(--muted);
-  line-height:1.2;
+  line-height:1.3;
 }
 .lede{
   font-size:var(--lede-size);
-  font-weight:700;
-  letter-spacing:.018em;
+  font-weight:800;
+  letter-spacing:-.005em;
   color:var(--accent);
-  line-height:1.64;
+  line-height:1.2;
+  text-transform:uppercase;
 }
-.lede--sm{font-size:var(--lede-sm);font-weight:800;letter-spacing:.036em;line-height:1.5}
-.note{font-size:var(--note-size);font-weight:400;color:var(--ink);line-height:1.18}
-.note--tight{font-size:var(--note-sm);line-height:1.15}
-.note--xs{font-size:var(--note-xs);line-height:1.45}
+.note{
+  font-size:var(--note-size);
+  font-weight:400;
+  color:var(--ink-soft);
+  line-height:1.42;
+  text-wrap:pretty;
+}
+.note--sm{font-size:var(--note-sm);line-height:1.45}
+.note--xs{font-size:var(--note-xs);line-height:1.5}
+
 .stat{
   font-size:var(--stat-size);
   font-weight:800;
-  letter-spacing:-.069em;
+  letter-spacing:-.055em;
   color:var(--accent);
   line-height:1;
+  font-variant-numeric:tabular-nums;
 }
-.orgs{display:flex;flex-direction:column}
+.orgs,.langs{display:flex;flex-direction:column}
 .orgs span{
   font-size:var(--org-size);
   font-weight:700;
-  letter-spacing:-.022em;
-  color:var(--ink-soft);
+  letter-spacing:-.015em;
+  color:var(--ink);
+  line-height:1.35;
+}
+.langs span{
+  font-size:var(--lang-size);
+  font-weight:800;
+  letter-spacing:-.02em;
+  text-transform:uppercase;
+  color:var(--accent);
   line-height:1.3;
 }
 
+.contact{
+  margin:0;
+  display:flex;
+  align-items:baseline;
+  gap:22px;
+  font-size:var(--contact-size);
+  line-height:1.3;
+}
+.contact a{
+  color:var(--accent);
+  font-weight:700;
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+.contact a:hover{border-bottom-color:var(--accent)}
+.contact span{color:var(--muted);font-weight:600;letter-spacing:.02em}
+
 /* ── software tiles ──────────────────────────────────────── */
-.tools{}
 .tool{
   position:absolute;
   display:grid;place-items:center;
-  border-radius:calc(var(--ts,42px) * .22);
+  border-radius:calc(var(--ts,52px) * .22);
   box-shadow:var(--lift-tool);
   overflow:hidden;
 }
 .tool b{
   font-weight:800;
-  font-size:calc(var(--ts,42px) * .46);
+  font-size:calc(var(--ts,52px) * .46);
   letter-spacing:-.02em;
   line-height:1;
 }
@@ -277,66 +304,47 @@ body{
 }
 @keyframes drip{0%,100%{transform:scaleY(.35);opacity:.35}50%{transform:scaleY(1);opacity:1}}
 
-.rail{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(0,0,0,.06)}
-.rail i{display:block;height:100%;width:0;background:var(--accent);transform-origin:0 50%}
+.rail{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(16,20,28,.07)}
+.rail i{display:block;height:100%;width:0;background:var(--accent)}
 
-.foot{
-  padding:64px 24px 72px;
-  border-top:1px solid rgba(0,0,0,.08);
-  display:flex;flex-wrap:wrap;gap:8px 32px;
-  justify-content:space-between;align-items:baseline;
-}
-.foot p{margin:0;font-size:13px;letter-spacing:-.01em}
-.foot__name{font-weight:700;color:var(--ink-soft)}
-.foot__links a{color:var(--accent);text-decoration:none;font-weight:600}
-.foot__links a:hover{text-decoration:underline}
+/* ── wide: content column 120→1240, portrait bleeds off the right ── */
+html.dsk .col--work {left:0;   width:560px}
+html.dsk .col--work .lede{margin-top:104px}   /* clears the tool row */
+html.dsk .col--work .note{margin-top:16px;width:520px}
+html.dsk .col--where{left:592px; width:200px}
+html.dsk .col--where .stat{margin-top:20px}
+html.dsk .col--where .note{margin-top:12px}
+html.dsk .col--where .orgs{margin-top:16px}
+html.dsk .col--lang {left:824px; width:296px}
+html.dsk .col--lang .langs{margin-top:20px}
+html.dsk .col--lang .note{margin-top:16px}
 
-/* ── design-space type scales ────────────────────────────── */
-html.dsk{
-  --giant-size:600px; --meet-size:32px;  --hi-size:228px;
-  --head-size:47px;   --head-lh:55px;    --head-w:900px;
-  --ovl-size:14px;    --lede-size:28px;  --lede-sm:12px;
-  --note-size:17px;   --note-sm:14px;    --note-xs:11px;
-  --stat-size:68px;   --org-size:17px;
-}
+/* ── compact: portrait band on top, facts in two rows ────── */
 html.mob{
-  --giant-size:130px; --meet-size:12px;  --hi-size:80px;
-  --head-size:22px;   --head-lh:26px;    --head-w:360px;
-  --ovl-size:10px;    --lede-size:17px;  --lede-sm:11px;
-  --note-size:11px;   --note-sm:10px;    --note-xs:9px;
-  --stat-size:44px;   --org-size:13px;
+  --giant-size:130px; --meet-size:12px;  --hi-size:84px;
+  --head-size:22px;   --head-lh:27px;    --head-w:346px;
+  --ovl-size:10px;    --lede-size:17px;  --lang-size:13px;
+  --note-size:11px;   --note-sm:11px;    --note-xs:9px;
+  --stat-size:40px;   --org-size:13px;   --contact-size:12px;
+  --badge-fs:10px;    --tool-gap:10px;
 }
-
-/* panel internals · desktop
-   Left edge 49px matches the heading inset, so card text, panel labels and
-   the tool row all sit on one line. Figma's own coords collided here (4+ ran
-   into the org names, the caption spilled out of its card) — these don't. */
-html.dsk .pl--work  .ovl {left:49px;  top:28px}
-html.dsk .pl--work  .lede{left:49px;  top:128px; width:520px}
-html.dsk .pl--work  .note{left:49px;  top:186px; width:520px}
-html.dsk .pl--where .ovl {left:643px; top:16px}
-html.dsk .pl--where .stat{left:632px; top:36px}
-html.dsk .pl--where .orgs{left:726px; top:40px; width:136px}
-html.dsk .pl--where .note{left:643px; top:110px; width:218px}
-html.dsk .pl--lang  .lede--sm{left:643px; top:172px; width:224px}
-html.dsk .pl--lang  .note--xs{left:643px; top:196px; width:224px}
-html.dsk .panel__glass--main  {left:0;    top:0;     width:67.8%; height:100%}
-html.dsk .panel__glass--top   {left:70%;  top:0;     width:30%;   height:56%}
-html.dsk .panel__glass--bottom{left:70%;  top:60.4%; width:30%;   height:39.6%}
-
-/* panel internals · compact — two stacked rows instead of two columns */
-html.mob .pl--work  .ovl {left:12px;  top:12px}
-html.mob .pl--work  .lede{left:12px;  top:70px;  width:334px}
-html.mob .pl--work  .note{left:12px;  top:100px; width:334px}
-html.mob .pl--where .ovl {left:12px;  top:150px}
-html.mob .pl--where .stat{left:10px;  top:168px}
-html.mob .pl--where .orgs{left:76px;  top:172px; width:104px}
-html.mob .pl--where .note{left:12px;  top:216px; width:164px}
-html.mob .pl--lang  .lede--sm{left:192px; top:150px; width:154px}
-html.mob .pl--lang  .note--xs{left:192px; top:178px; width:154px}
-html.mob .panel__glass--main  {left:0;   top:0;     width:100%; height:49%}
-html.mob .panel__glass--top   {left:0;   top:52%;   width:50%;  height:48%}
-html.mob .panel__glass--bottom{left:52%; top:52%;   width:48%;  height:48%}
+html.mob .col{padding-top:16px}
+html.mob .col--work {left:0;   top:0;     width:342px}
+html.mob .col--work .lede{margin-top:82px}
+html.mob .col--work .note{margin-top:10px;width:342px}
+html.mob .col--where{left:0;   top:205px; width:160px}
+html.mob .col--where .stat{margin-top:12px}
+html.mob .col--where .note{margin-top:8px}
+html.mob .col--where .orgs{margin-top:10px}
+html.mob .col--lang {left:182px; top:205px; width:160px}
+html.mob .col--lang .langs{margin-top:12px}
+html.mob .col--lang .note{margin-top:10px}
+html.mob .contact{gap:14px}
+html.mob .portrait{
+  object-position:52% 14%;
+  -webkit-mask-image:linear-gradient(180deg,#000 76%,transparent 100%);
+          mask-image:linear-gradient(180deg,#000 76%,transparent 100%);
+}
 
 /* ── reduced motion: hold the final composition ──────────── */
 @media (prefers-reduced-motion: reduce){

@@ -28,11 +28,15 @@
         <div class="giant giant--b" id="gner">GNER</div>
         <div class="meet" id="meet">MEET THE DESIGNER</div>
 
-        <!-- ── Act 2 · portrait + statement ─────────────────── -->
-        <img class="profile" id="profile" src="assets/portrait-profile.webp"
+        <!-- ── Act 2 · the portrait settles into its band ───── -->
+        <img class="portrait" id="profile" src="assets/portrait-profile.webp"
              alt="Black and white portrait of Shibili Nuhman" decoding="async" />
+        <img class="portrait" id="photocard" src="assets/portrait-card.webp"
+             alt="" aria-hidden="true" decoding="async" />
 
-        <div class="card" id="card"></div>
+        <!-- ── Act 3 · the statement ────────────────────────── -->
+        <div class="badge" id="badge"><span class="badge__face">GRAPHIC DESIGNER</span></div>
+
         <div class="hi" id="hi">Hi,</div>
 
         <h1 class="heading" id="heading">
@@ -42,39 +46,29 @@
           <span class="ln" id="ln4">on screens, on paper, on streets</span>
         </h1>
 
-        <div class="badge" id="badge">
-          <span class="badge__pill badge__pill--3"></span>
-          <span class="badge__pill badge__pill--2"></span>
-          <span class="badge__pill badge__pill--1"></span>
-          <span class="badge__face">GRAPHIC DESIGNER</span>
-        </div>
-
-        <!-- ── Act 3 · the facts ────────────────────────────── -->
+        <!-- ── Act 4 · the facts ────────────────────────────── -->
         <div class="panel" id="panel">
-          <div class="panel__glass panel__glass--main"></div>
-          <div class="panel__glass panel__glass--top"></div>
-          <div class="panel__glass panel__glass--bottom"></div>
+          <section class="col col--work">
+            <p class="ovl">How I work</p>
+            <p class="lede">Concept &bull; Execution &bull; Deliver</p>
+            <p class="note">No switch. No wait. One seamless, reusable workflow from the first sketch to the final export.</p>
+          </section>
 
-          <div class="pl pl--work">
-            <p class="ovl">HOW I WORK</p>
-            <p class="lede">CONCEPT &bull; EXECUTION &bull; DELIVER</p>
-            <p class="note">No switch. No wait. One seamless, reusable workflow<br />from the first sketch to the final export.</p>
-          </div>
-
-          <div class="pl pl--where">
-            <p class="ovl">WHERE I WORK(ED)</p>
+          <section class="col col--where">
+            <p class="ovl">Where I work(ed)</p>
             <p class="stat">4+</p>
+            <p class="note note--sm">years in Dubai, building brand identities and the content that carries them.</p>
             <p class="orgs"><span>Zee Real Estate</span><span>Dulight FZE</span></p>
-            <p class="note note--tight">years in Dubai, building<br />content that carries them.</p>
-          </div>
+          </section>
 
-          <div class="pl pl--lang">
-            <p class="lede lede--sm">ENGLISH &bull; ARABIC &bull; MALAYALAM</p>
+          <section class="col col--lang">
+            <p class="ovl">Languages</p>
+            <p class="langs"><span>English</span><span>Arabic</span><span>Malayalam</span></p>
             <p class="note note--xs">I read and write English and Arabic. Speaking is limited to English and my native Malayalam.</p>
-          </div>
+          </section>
         </div>
 
-        <!-- software row: animates on its own path across the whole timeline -->
+        <!-- the software row animates on its own path across the whole timeline -->
         <div class="tools" id="tools">
           <span class="tool" data-tool="id"><b>Id</b></span>
           <span class="tool" data-tool="ai"><b>Ai</b></span>
@@ -86,8 +80,10 @@
           <span class="tool" data-tool="bl"><b>Bl</b></span>
         </div>
 
-        <img class="photocard" id="photocard" src="assets/portrait-card.webp"
-             alt="Portrait of Shibili Nuhman" decoding="async" />
+        <p class="contact" id="contact">
+          <a href="mailto:shibilisbl9@gmail.com">shibilisbl9@gmail.com</a>
+          <span>Dubai, UAE</span>
+        </p>
 
       </div><!-- /frame -->
     </div><!-- /stage -->
@@ -97,26 +93,22 @@
   </div><!-- /pin -->
 </div><!-- /scroller -->
 
-<footer class="foot">
-  <p class="foot__name">Shibili Nuhman &mdash; Graphic Designer, Dubai</p>
-  <p class="foot__links">
-    <a href="mailto:shibilisbl9@gmail.com">shibilisbl9@gmail.com</a>
-  </p>
-</footer>
-
 <noscript>
   <style>
     .scroller{height:auto}
     .pin{position:static;height:auto;overflow:visible}
     .stage{position:static}
-    .frame{position:static;transform:none;width:auto;height:auto}
+    .frame{position:static;transform:none;width:auto;height:auto;padding:8vh 6vw}
     .frame > *{position:static!important;transform:none!important;opacity:1!important}
-    .giant,.meet,.cutout,.profile,.card,.hi,.badge,.panel__glass,.tools,.rail,.cue{display:none}
-    .heading{width:auto;padding:14vh 6vw 0;font-size:clamp(28px,5vw,58px);line-height:1.18}
-    .panel{padding:6vh 6vw}
-    .pl{position:static;inset:auto;margin-bottom:34px}
-    .pl p{position:static!important;width:auto!important;margin:0 0 6px}
-    .photocard{display:block;width:min(320px,60vw);height:auto;margin:0 6vw 6vh}
+    .giant,.meet,.cutout,.hi,.rail,.cue,#photocard{display:none}
+    .heading{width:auto;font-size:clamp(30px,5vw,64px);line-height:1.16;margin-bottom:8vh}
+    .panel{display:flex;flex-wrap:wrap;gap:40px}
+    .col{position:static!important;width:min(420px,100%)!important}
+    .tools{display:flex;flex-wrap:wrap;gap:12px;margin:32px 0}
+    .tool{position:static!important;transform:none!important;width:48px!important;height:48px!important;--ts:48px}
+    .portrait{display:block;width:min(360px,70vw);height:auto;margin-top:6vh;mask-image:none;-webkit-mask-image:none}
+    .badge{width:auto;height:auto;margin-bottom:24px}
+    .badge__face{position:static!important;width:auto!important;height:auto!important;padding:12px 22px;font-size:13px}
   </style>
 </noscript>
 <script src="scroll.js"></script>
