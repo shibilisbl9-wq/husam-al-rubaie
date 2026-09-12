@@ -38,7 +38,7 @@
      correctly before JS picks a layout (and with JS off entirely) */
   --giant-size:600px; --meet-size:32px;  --hi-size:228px;
   --head-size:47px;   --head-lh:55px;    --head-w:900px;
-  --ovl-size:14px;    --lede-size:28px;  --lede-sm:14px;
+  --ovl-size:14px;    --lede-size:28px;  --lede-sm:12px;
   --note-size:17px;   --note-sm:14px;    --note-xs:11px;
   --stat-size:68px;   --org-size:17px;
 
@@ -88,10 +88,11 @@ body{
   will-change:transform;
 }
 .frame > *{position:absolute;top:0;left:0;will-change:transform,opacity}
-#desi{z-index:1} #cutout{z-index:2} #gner{z-index:3} #meet{z-index:4}
-#profile{z-index:2} #photocard{z-index:3}
-#card{z-index:5} #panel{z-index:5} #hi{z-index:6} #heading{z-index:7}
-#badge{z-index:8} #tools{z-index:9}
+#desi,#gner{z-index:1}
+#card,#panel{z-index:2}
+#profile,#photocard{z-index:3}
+#cutout{z-index:4} #meet{z-index:5}
+#hi{z-index:6} #heading{z-index:7} #badge{z-index:8} #tools{z-index:9}
 
 /* ── Act 1 · giant kinetic type ──────────────────────────── */
 .giant{
@@ -110,7 +111,7 @@ body{
   user-select:none;
 }
 .giant--a{background-image:linear-gradient(180deg,rgba(0,0,0,.95) 0%,rgba(255,255,255,0) 100%)}
-.giant--b{background-image:linear-gradient(180deg,rgba(0,0,0,.58) 0%,rgba(255,255,255,0) 83%)}
+.giant--b{background-image:linear-gradient(180deg,rgba(0,0,0,.78) 0%,rgba(255,255,255,0) 100%)}
 
 .meet{
   width:var(--W);
@@ -176,12 +177,12 @@ body{
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
 }
-.badge__pill--3{left:0;   top:calc(var(--bh) * .34); width:calc(var(--bw) * .77); height:calc(var(--bh) * .66)}
-.badge__pill--2{left:calc(var(--bw)*.06); top:calc(var(--bh)*.20); width:calc(var(--bw)*.80); height:calc(var(--bh)*.66)}
-.badge__pill--1{left:calc(var(--bw)*.12); top:calc(var(--bh)*.34); width:calc(var(--bw)*.88); height:calc(var(--bh)*.66)}
+.badge__pill--3{left:calc(var(--bw)*.03); top:calc(var(--bh)*.30); width:calc(var(--bw)*.94); height:calc(var(--bh)*.66); opacity:.35}
+.badge__pill--2{left:calc(var(--bw)*.05); top:calc(var(--bh)*.24); width:calc(var(--bw)*.92); height:calc(var(--bh)*.66); opacity:.55}
+.badge__pill--1{left:calc(var(--bw)*.07); top:calc(var(--bh)*.18); width:calc(var(--bw)*.90); height:calc(var(--bh)*.66); opacity:.8}
 .badge__face{
-  left:calc(var(--bw)*.06); top:0;
-  width:calc(var(--bw)*.92); height:calc(var(--bh)*.66);
+  left:0; top:0;
+  width:var(--bw); height:calc(var(--bh)*.66);
   background:rgba(255,255,255,.72);
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.10);
   backdrop-filter:blur(14px) saturate(1.4);
@@ -226,7 +227,7 @@ body{
   font-weight:800;
   letter-spacing:-.069em;
   color:var(--accent);
-  line-height:1.85;
+  line-height:1;
 }
 .orgs{display:flex;flex-direction:column}
 .orgs span{
@@ -294,7 +295,7 @@ body{
 html.dsk{
   --giant-size:600px; --meet-size:32px;  --hi-size:228px;
   --head-size:47px;   --head-lh:55px;    --head-w:900px;
-  --ovl-size:14px;    --lede-size:28px;  --lede-sm:14px;
+  --ovl-size:14px;    --lede-size:28px;  --lede-sm:12px;
   --note-size:17px;   --note-sm:14px;    --note-xs:11px;
   --stat-size:68px;   --org-size:17px;
 }
@@ -306,30 +307,36 @@ html.mob{
   --stat-size:44px;   --org-size:13px;
 }
 
-/* panel internals · desktop — offsets are Figma coords minus the panel origin (178,712) */
-html.dsk .pl--work  .ovl {left:53px;  top:33px}
-html.dsk .pl--work  .lede{left:47px;  top:136px; width:540px}
-html.dsk .pl--work  .note{left:49px;  top:192px; width:540px}
-html.dsk .pl--where .ovl {left:642px; top:33px}
-html.dsk .pl--where .stat{left:634px; top:32px}
-html.dsk .pl--where .orgs{left:729px; top:58px}
-html.dsk .pl--where .note{left:642px; top:122px; width:236px}
-html.dsk .pl--lang  .lede--sm{left:635px; top:194px; width:112px}
-html.dsk .pl--lang  .note--xs{left:739px; top:192px; width:140px}
+/* panel internals · desktop
+   Left edge 49px matches the heading inset, so card text, panel labels and
+   the tool row all sit on one line. Figma's own coords collided here (4+ ran
+   into the org names, the caption spilled out of its card) — these don't. */
+html.dsk .pl--work  .ovl {left:49px;  top:28px}
+html.dsk .pl--work  .lede{left:49px;  top:128px; width:520px}
+html.dsk .pl--work  .note{left:49px;  top:186px; width:520px}
+html.dsk .pl--where .ovl {left:643px; top:16px}
+html.dsk .pl--where .stat{left:632px; top:36px}
+html.dsk .pl--where .orgs{left:726px; top:40px; width:136px}
+html.dsk .pl--where .note{left:643px; top:110px; width:218px}
+html.dsk .pl--lang  .lede--sm{left:643px; top:172px; width:224px}
+html.dsk .pl--lang  .note--xs{left:643px; top:196px; width:224px}
+html.dsk .panel__glass--main  {left:0;    top:0;     width:67.8%; height:100%}
+html.dsk .panel__glass--top   {left:70%;  top:0;     width:30%;   height:56%}
+html.dsk .panel__glass--bottom{left:70%;  top:60.4%; width:30%;   height:39.6%}
 
 /* panel internals · compact — two stacked rows instead of two columns */
-html.mob .pl--work  .ovl {left:14px;  top:12px}
-html.mob .pl--work  .lede{left:14px;  top:72px;  width:334px}
-html.mob .pl--work  .note{left:14px;  top:100px; width:334px}
-html.mob .pl--where .ovl {left:14px;  top:150px}
-html.mob .pl--where .stat{left:14px;  top:160px}
-html.mob .pl--where .orgs{left:78px;  top:176px}
-html.mob .pl--where .note{left:14px;  top:222px; width:170px}
-html.mob .pl--lang  .lede--sm{left:200px; top:150px; width:146px}
-html.mob .pl--lang  .note--xs{left:200px; top:192px; width:146px}
-html.mob .panel__glass--main  {left:0;   top:0;   width:100%; height:49%}
-html.mob .panel__glass--top   {left:0;   top:52%; width:52%;  height:48%}
-html.mob .panel__glass--bottom{left:54%; top:52%; width:46%;  height:48%}
+html.mob .pl--work  .ovl {left:12px;  top:12px}
+html.mob .pl--work  .lede{left:12px;  top:70px;  width:334px}
+html.mob .pl--work  .note{left:12px;  top:100px; width:334px}
+html.mob .pl--where .ovl {left:12px;  top:150px}
+html.mob .pl--where .stat{left:10px;  top:168px}
+html.mob .pl--where .orgs{left:76px;  top:172px; width:104px}
+html.mob .pl--where .note{left:12px;  top:216px; width:164px}
+html.mob .pl--lang  .lede--sm{left:192px; top:150px; width:154px}
+html.mob .pl--lang  .note--xs{left:192px; top:178px; width:154px}
+html.mob .panel__glass--main  {left:0;   top:0;     width:100%; height:49%}
+html.mob .panel__glass--top   {left:0;   top:52%;   width:50%;  height:48%}
+html.mob .panel__glass--bottom{left:52%; top:52%;   width:48%;  height:48%}
 
 /* ── reduced motion: hold the final composition ──────────── */
 @media (prefers-reduced-motion: reduce){
